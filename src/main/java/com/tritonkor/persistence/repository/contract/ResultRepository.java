@@ -11,6 +11,9 @@ public interface ResultRepository extends Repository<Result> {
     List<Result> findAllByTestId(UUID testId);
 
     List<Result> findAllByOwnerId(UUID studentId);
+    List<Result> findAllByGroupCode(String groupCode);
+
+    List<Result> findAllByTeacherId(UUID teacherId);
 
     List<Result> findAll(int offset, int limit, String sortColumn, boolean ascending,
             ResultFilterDto resultFilterDto);

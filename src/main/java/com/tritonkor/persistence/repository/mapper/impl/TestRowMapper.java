@@ -33,6 +33,7 @@ public class TestRowMapper implements RowMapper<Test> {
                 .title(rs.getString("title"))
                 .ownerId(ownerId)
                 .owner(userProxy)
+                .time(rs.getInt("time"))
                 .questions(questions)
                 .tags(tags)
                 .createdAt(rs.getTimestamp("create_date").toLocalDateTime()).build();

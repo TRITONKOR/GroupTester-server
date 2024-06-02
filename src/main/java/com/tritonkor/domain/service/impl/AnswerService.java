@@ -18,14 +18,12 @@ public class AnswerService {
 
     private final AnswerContext answerContext;
     private final AnswerRepository answerRepository;
-    //private final AuthorizeService authorizeService;
     private final Validator validator;
 
-    public AnswerService(PersistenceContext persistenceContext, AuthorizeService authorizeService,
+    public AnswerService(PersistenceContext persistenceContext,
             Validator validator) {
         this.answerContext = persistenceContext.answers;
         this.answerRepository = persistenceContext.answers.repository;
-        // this.authorizeService = authorizeService;
         this.validator = validator;
     }
 
@@ -51,18 +49,20 @@ public class AnswerService {
         return answerRepository.count();
     }
 
-    public Answer create(AnswerStoreDto answerStorDto) {
-        var violations = validator.validate(answerStorDto);
+    public Answer create(AnswerStoreDto answerStoreDto) {
+        System.out.println(answerStoreDto);
+        var violations = validator.validate(answerStoreDto);
         if (!violations.isEmpty()) {
+            System.out.println(violations);
             throw ValidationException.create("збереженні відповіді", violations);
         }
 
         Answer answer = Answer.builder()
                 .id(null)
-                .questionId(answerStorDto.questionId())
+                .questionId(answerStoreDto.questionId())
                 .question(null)
-                .text(answerStorDto.text())
-                .isCorrect(answerStorDto.isCorrect())
+                .text(answerStoreDto.text())
+                .isCorrect(answerStoreDto.isCorrect())
                 .build();
 
         answerContext.registerNew(answer);
@@ -73,6 +73,7 @@ public class AnswerService {
     public Answer update(AnswerUpdateDto answerUpdateDto) {
         var violations = validator.validate(answerUpdateDto);
         if (!violations.isEmpty()) {
+            System.out.println(violations);
             throw ValidationException.create("оновленні відповіді", violations);
         }
 

@@ -12,6 +12,7 @@ import lombok.Setter;
 public class TestResponse {
     private String id;
     private String title;
+    private int time;
     private List<QuestionResponse> questions;
     private List<TagResponse> tags;
     private LocalDateTime createDate;
@@ -19,6 +20,7 @@ public class TestResponse {
     public TestResponse(Test test) {
         this.id = test.getId().toString();
         this.title = test.getTitle();
+        this.time = test.getTime();
         this.questions = test.getQuestionsLazy().stream()
                 .map(QuestionResponse::new)
                 .collect(Collectors.toList());

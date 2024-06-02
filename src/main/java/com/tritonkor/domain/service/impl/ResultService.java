@@ -1,7 +1,6 @@
 package com.tritonkor.domain.service.impl;
 
 import com.tritonkor.domain.dto.ResultStoreDto;
-import com.tritonkor.domain.dto.ResultUpdateDto;
 import com.tritonkor.domain.exception.ValidationException;
 import com.tritonkor.persistence.context.factory.PersistenceContext;
 import com.tritonkor.persistence.context.impl.ResultContext;
@@ -10,8 +9,6 @@ import com.tritonkor.persistence.exception.EntityNotFoundException;
 import com.tritonkor.persistence.repository.contract.ResultRepository;
 import jakarta.validation.Validator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +17,12 @@ public class ResultService {
 
     private final ResultContext resultContext;
     private final ResultRepository resultRepository;
-    //private final AuthorizeService authorizeService;
     private final Validator validator;
 
-    public ResultService(PersistenceContext persistenceContext, AuthorizeService authorizeService,
+    public ResultService(PersistenceContext persistenceContext,
             Validator validator) {
         this.resultContext = persistenceContext.results;
         this.resultRepository = persistenceContext.results.repository;
-        //this.authorizeService = authorizeService;
         this.validator = validator;
     }
 
@@ -45,8 +40,16 @@ public class ResultService {
         return resultContext.repository.findAllByTestId(testId);
     }
 
+    public List<Result> findAllByGroupCode(String groupCode) {
+        return resultContext.repository.findAllByGroupCode(groupCode);
+    }
+
     public List<Result> findAllByUserId(UUID userId) {
         return resultContext.repository.findAllByOwnerId(userId);
+    }
+
+    public List<Result> findAllByTeacherId(UUID teacherId) {
+        return resultContext.repository.findAllByTeacherId(teacherId);
     }
 
     public long count() {
@@ -65,30 +68,11 @@ public class ResultService {
                 .owner(null)
                 .testId(resultStoreDto.testId())
                 .test(null)
+                .groupCode(resultStoreDto.groupCode())
                 .mark(resultStoreDto.mark())
                 .createdAt(null).build();
 
         resultContext.registerNew(result);
-        resultContext.commit();
-        return resultContext.getEntity();
-    }
-
-    public Result update(ResultUpdateDto resultUpdateDto) {
-        var violations = validator.validate(resultUpdateDto);
-        if (!violations.isEmpty()) {
-            throw ValidationException.create("оновленні результата", violations);
-        }
-
-        Result result = Result.builder()
-                .id(resultUpdateDto.id())
-                .ownerId(resultUpdateDto.ownerId())
-                .owner(null)
-                .testId(resultUpdateDto.testId())
-                .test(null)
-                .mark(resultUpdateDto.mark())
-                .createdAt(null).build();
-
-        resultContext.registerModified(result);
         resultContext.commit();
         return resultContext.getEntity();
     }

@@ -59,6 +59,9 @@ public class TestRepositoryImpl extends GenericJdbcRepository<Test> implements T
         if (!test.getTitle().isBlank()) {
             values.put("title", test.getTitle());
         }
+        if (test.getTime() != 0) {
+            values.put("time", test.getTime());
+        }
         if (Objects.nonNull(test.getOwnerId())) {
             values.put("owner_id", test.getOwnerId());
         }

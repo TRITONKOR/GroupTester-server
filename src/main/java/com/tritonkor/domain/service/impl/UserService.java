@@ -26,16 +26,14 @@ public class UserService {
 
     private final UserContext userContext;
     private final UserRepository userRepository;
-    private final AuthorizeService authorizeService;
     private final FileService fileService;
     private final Validator validator;
     private Path defaultAvatar;
 
-    public UserService(PersistenceContext persistenceContext, AuthorizeService authorizeService,
+    public UserService(PersistenceContext persistenceContext,
             FileService fileService, Validator validator) throws IOException {
         this.userContext = persistenceContext.users;
         this.userRepository = persistenceContext.users.repository;
-        this.authorizeService = authorizeService;
         this.fileService = fileService;
         this.validator = validator;
         // вказуємо дефолтний аватар

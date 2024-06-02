@@ -10,6 +10,7 @@ public record QuestionUpdateDto(
         @Length(min = 10, max = 64, message = "Текст питання повинний відповідати діапазону символів від 10 до 64")
         String text,
 
+        byte[] image,
         UUID testId
 ) {
 

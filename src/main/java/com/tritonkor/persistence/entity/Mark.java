@@ -18,6 +18,8 @@ public class Mark {
         this.mark = mark;
     }
 
+    public Mark() {}
+
     /**
      * Gets the mark value.
      *

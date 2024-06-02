@@ -19,14 +19,12 @@ import org.springframework.stereotype.Service;
 public class QuestionService {
     private final QuestionContext questionContext;
     private final QuestionRepository questionRepository;
-    //private final AuthorizeService authorizeService;
     private final Validator validator;
 
-    public QuestionService(PersistenceContext persistenceContext, AuthorizeService authorizeService,
+    public QuestionService(PersistenceContext persistenceContext,
             Validator validator) {
         this.questionContext = persistenceContext.questions;
         this.questionRepository = persistenceContext.questions.repository;
-       // this.authorizeService = authorizeService;
         this.validator = validator;
     }
 
@@ -63,6 +61,7 @@ public class QuestionService {
         Question question = Question.builder()
                 .id(null)
                 .text(questionStoreDto.text())
+                .image(questionStoreDto.image())
                 .answers(null)
                 .testId(questionStoreDto.testId())
                 .test(null)
@@ -85,6 +84,7 @@ public class QuestionService {
         Question question = Question.builder()
                 .id(questionUpdateDto.id())
                 .text(questionUpdateDto.text())
+                .image(questionUpdateDto.image())
                 .answers(null)
                 .testId(questionUpdateDto.testId())
                 .test(null)
@@ -95,9 +95,11 @@ public class QuestionService {
         return questionContext.getEntity();
     }
 
-    public boolean delete(UUID id) {
+    public boolean delete(UUID id, UUID userID) {
         Question question = findById(id);
-
-        return questionContext.repository.delete(question.getId());
+        if (question.getTestLazy().getOwnerId().equals(userID)) {
+            return questionContext.repository.delete(question.getId());
+        }
+        return false;
     }
 }

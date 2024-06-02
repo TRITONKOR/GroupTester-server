@@ -18,6 +18,7 @@ public class Test extends Entity implements Comparable<Test> {
     private Tags tags;
     private final UUID ownerId;
     private final UserProxy owner;
+    private int time;
     private Questions questions;
     private final LocalDateTime createdAt;
 
@@ -32,7 +33,7 @@ public class Test extends Entity implements Comparable<Test> {
      * @param tags the tags associated with the test
      * @param createdAt the timestamp when the test was created
      */
-    public Test(UUID id, String title, UUID ownerId, UserProxy owner,
+    public Test(UUID id, String title, UUID ownerId, UserProxy owner, int time,
             Questions questions, Tags tags,
             LocalDateTime createdAt) {
         super(id);
@@ -40,6 +41,7 @@ public class Test extends Entity implements Comparable<Test> {
         this.tags = tags;
         this.ownerId = ownerId;
         this.owner = owner;
+        this.time = time;
         this.questions = questions;
         this.createdAt = createdAt;
     }
@@ -50,9 +52,9 @@ public class Test extends Entity implements Comparable<Test> {
      * @return A {@code TestBuilderId} instance.
      */
     public static TestBuilderId builder() {
-        return id -> title -> ownerId -> owner -> questions -> tags -> createdAt -> () -> new Test(
+        return id -> title -> ownerId -> owner -> time -> questions -> tags -> createdAt -> () -> new Test(
                 id, title,
-                ownerId, owner, questions, tags, createdAt);
+                ownerId, owner, time, questions, tags, createdAt);
     }
 
     /**
@@ -79,7 +81,12 @@ public class Test extends Entity implements Comparable<Test> {
 
     public interface TestBuilderOwner {
 
-        TestBuilderQuestions owner(UserProxy owner);
+        TestBuilderTime owner(UserProxy owner);
+    }
+
+    public interface TestBuilderTime {
+
+        TestBuilderQuestions time(int time);
     }
 
     public interface TestBuilderQuestions {
@@ -158,6 +165,10 @@ public class Test extends Entity implements Comparable<Test> {
      */
     public UUID getOwnerId() {
         return ownerId;
+    }
+
+    public int getTime() {
+        return time;
     }
 
     /**

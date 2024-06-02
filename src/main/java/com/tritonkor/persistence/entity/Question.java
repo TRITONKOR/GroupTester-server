@@ -5,20 +5,24 @@ import com.tritonkor.persistence.entity.proxy.contract.TestProxy;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import lombok.Getter;
 
 /**
  * The {@code Question} class represents a question with its associated properties.
  */
+@Getter
 public class Question extends Entity implements Comparable<Question>{
 
     private String text;
     private Answers answers;
+    private byte[] image;
     private final UUID testId;
     private final TestProxy test;
 
-    public Question(UUID id, String text, Answers answers, UUID testId, TestProxy test) {
+    public Question(UUID id, String text, byte[] image, Answers answers, UUID testId, TestProxy test) {
         super(id);
         this.text = text;
+        this.image = image;
         this.answers = answers;
         this.testId = testId;
         this.test = test;
@@ -30,8 +34,8 @@ public class Question extends Entity implements Comparable<Question>{
      * @return A {@code QuestionBuilderId} instance.
      */
     public static QuestionBuilderId builder() {
-        return id -> answers -> testId -> test -> text -> () -> new Question(id, answers, testId, test,
-                text);
+        return id -> answers -> testId -> test -> text -> image -> () -> new Question(id, answers, testId, test,
+                text, image);
     }
 
     /**
@@ -44,7 +48,12 @@ public class Question extends Entity implements Comparable<Question>{
 
     public interface QuestionBuilderText {
 
-        QuestionBuilderAnswers text(String text);
+        QuestionBuilderImage text(String text);
+    }
+
+    public interface QuestionBuilderImage {
+
+        QuestionBuilderAnswers image(byte[] image);
     }
 
     public interface QuestionBuilderAnswers {
@@ -70,26 +79,15 @@ public class Question extends Entity implements Comparable<Question>{
         Question build();
     }
 
-    /**
-     * Gets the text of the question.
-     *
-     * @return The question text.
-     */
-    public String getText() {
-        return text;
-    }
 
     public List<Answer> getAnswersLazy() {
         return answers.get(id);
     }
 
     public Test getTestLazy() {
-        return test.get(id);
+        return test.get(testId);
     }
 
-    public UUID getTestId() {
-        return testId;
-    }
 
     @Override
     public int compareTo(Question o) {

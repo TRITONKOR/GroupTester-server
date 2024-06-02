@@ -4,13 +4,19 @@ import com.tritonkor.domain.dto.AnswerStoreDto;
 import com.tritonkor.domain.dto.AnswerUpdateDto;
 import com.tritonkor.domain.dto.QuestionStoreDto;
 import com.tritonkor.domain.dto.QuestionUpdateDto;
+import com.tritonkor.domain.dto.TestStoreDto;
 import com.tritonkor.domain.service.impl.AnswerService;
 import com.tritonkor.domain.service.impl.QuestionService;
 import com.tritonkor.domain.service.impl.TestService;
-import com.tritonkor.net.request.queston.SaveQuestionRequest;
-import com.tritonkor.net.response.GroupResponse;
+import com.tritonkor.net.request.question.DeleteQuestionRequest;
+import com.tritonkor.net.request.question.SaveQuestionRequest;
+import com.tritonkor.net.request.test.CreateTestRequest;
+import com.tritonkor.net.request.test.DeleteTestRequest;
+import com.tritonkor.net.response.AnswerResponse;
 import com.tritonkor.net.response.TestResponse;
 import com.tritonkor.persistence.entity.Answer;
+import com.tritonkor.persistence.entity.Question;
+import com.tritonkor.persistence.entity.Tag;
 import com.tritonkor.persistence.entity.Test;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
@@ -45,7 +51,7 @@ public class TestController {
         return ResponseEntity.ok(testResponses);
     }
 
-    @GetMapping()
+    @GetMapping("/get-by-id")
     public ResponseEntity<TestResponse> getTest(@RequestParam("id") String id) {
         Test test = testService.findById(UUID.fromString(id));
 
@@ -68,37 +74,81 @@ public class TestController {
         return ResponseEntity.ok(testResponses);
     }
 
-    @PostMapping("/update-question")
+    @PostMapping("/question/save")
     public ResponseEntity<TestResponse> updateQuestion(
             @Valid @RequestBody SaveQuestionRequest request) {
+        Test test;
         if (Objects.isNull(request.getId())) {
             QuestionStoreDto questionStoreDto = new QuestionStoreDto(request.getText(),
-                    request.getTestId());
-            questionService.create(questionStoreDto);
+                    request.getImage(), request.getTestId());
+
+            Question createdQuestion = questionService.create(questionStoreDto);
+
 
             for (Answer answer : request.getAnswers()) {
+                System.out.println(answer.toString());
                 AnswerStoreDto answerStoreDto = new AnswerStoreDto(
                         answer.getText(),
-                        answer.getQuestionId(),
-                        // Assuming getId() returns the ID of the newly created question
-                        answer.getCorrect()
+                        createdQuestion.getId(),
+                        answer.getIsCorrect()
                 );
                 answerService.create(answerStoreDto);
             }
+
+            test = testService.findById(request.getTestId());
+            return ResponseEntity.ok(new TestResponse(test));
         } else {
             QuestionUpdateDto questionUpdateDto = new QuestionUpdateDto(request.getId(),
-                    request.getText(), request.getTestId());
-            questionService.update(questionUpdateDto);
+                    request.getText(), request.getImage(), request.getTestId());
+
+            Question createdQuestion = questionService.update(questionUpdateDto);
 
             for (Answer answer : request.getAnswers()) {
-                AnswerUpdateDto answerUpdateDto = new AnswerUpdateDto(answer.getId(),
+                AnswerUpdateDto answerUpdateDto = new AnswerUpdateDto(
+                        answer.getId(),
                         answer.getText(),
-                        answer.getQuestionId(),
-                        answer.getCorrect()
+                        createdQuestion.getId(),
+                        answer.getIsCorrect()
                 );
                 answerService.update(answerUpdateDto);
             }
+
+            test = testService.findById(request.getTestId());
+            return ResponseEntity.ok(new TestResponse(test));
         }
-        return null;
+    }
+
+    @PostMapping("/question/delete")
+    public ResponseEntity<Boolean> deleteQuestion(@Valid @RequestBody DeleteQuestionRequest request) {
+
+        Boolean result = questionService.delete(request.getQuestionId(), request.getUserId());
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Boolean> createTest(@Valid @RequestBody CreateTestRequest request) {
+        TestStoreDto testStoreDto = new TestStoreDto(request.getTestTitle(), request.getUserId(),
+                request.getTime());
+        Test test = testService.create(testStoreDto);
+        List<Tag> tags = request.getTags();
+
+        for(Tag tag : tags) {
+            testService.attachTag(test.getId(), tag.getId());
+        }
+
+        if (test != null) {
+            return ResponseEntity.ok(true);
+        }
+
+        return ResponseEntity.ok(false);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Boolean> deleteTest(@Valid @RequestBody DeleteTestRequest request) {
+
+        Boolean result = testService.delete(request.getTestId(), request.getUserId());
+
+        return ResponseEntity.ok(result);
     }
 }

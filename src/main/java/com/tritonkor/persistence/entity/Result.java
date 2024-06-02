@@ -9,21 +9,22 @@ import java.util.UUID;
  * The {@code Result} class represents a result of a test for a specific user.
  */
 public class Result extends Entity implements Comparable<Result> {
-
     private final UUID ownerId;
     private final UserProxy owner;
     private final UUID testId;
     private final TestProxy test;
+    private String groupCode;
     private final Mark mark;
     private final LocalDateTime createdAt;
 
-    public Result(UUID id, UUID ownerId, UserProxy owner, UUID testId, TestProxy test,
+    public Result(UUID id, UUID ownerId, UserProxy owner, UUID testId, TestProxy test, String groupCode,
              Mark mark, LocalDateTime createdAt) {
         super(id);
         this.ownerId = ownerId;
         this.owner = owner;
         this.testId = testId;
         this.test = test;
+        this.groupCode = groupCode;
         this.mark = mark;
         this.createdAt = createdAt;
     }
@@ -34,8 +35,8 @@ public class Result extends Entity implements Comparable<Result> {
      * @return A {@code ResultBuilderId} instance.
      */
     public static ResultBuilderId builder() {
-        return id -> ownerId -> owner -> testId -> test -> mark -> createdAt -> () -> new Result(
-                id, ownerId, owner, testId, test, mark, createdAt);
+        return id -> ownerId -> owner -> testId -> test -> groupCode -> mark -> createdAt -> () -> new Result(
+                id, ownerId, owner, testId, test, groupCode, mark, createdAt);
     }
 
     /**
@@ -63,28 +64,26 @@ public class Result extends Entity implements Comparable<Result> {
 
     public interface ResultBuilderTest {
 
-        ResultBuilderMark test(TestProxy test);
+        ResultBuilderGroupCode test(TestProxy test);
     }
 
-    /**
-     * Interface for the {@code Result} builder to set the grade.
-     */
+    public interface ResultBuilderGroupCode {
+
+        ResultBuilderMark groupCode(String groupCode);
+    }
+
     public interface ResultBuilderMark {
 
         ResultBuilderCreatedAt mark(Mark mark);
     }
 
-    /**
-     * Interface for the {@code Result} builder to set the creation date.
-     */
+
     public interface ResultBuilderCreatedAt {
 
         ResultBuilder createdAt(LocalDateTime createdAt);
     }
 
-    /**
-     * Interface for the final steps of the {@code Result} builder.
-     */
+
     public interface ResultBuilder {
 
         Result build();
@@ -108,6 +107,10 @@ public class Result extends Entity implements Comparable<Result> {
 
     public UUID getTestId() {
         return testId;
+    }
+
+    public String getGroupCode() {
+        return groupCode;
     }
 
     /**

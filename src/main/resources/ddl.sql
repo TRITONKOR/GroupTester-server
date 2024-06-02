@@ -1,14 +1,4 @@
-DROP TABLE IF EXISTS test_tag CASCADE;
-DROP TABLE IF EXISTS results CASCADE;
-DROP TABLE IF EXISTS answers CASCADE;
-DROP TABLE IF EXISTS questions CASCADE;
-DROP TABLE IF EXISTS reports CASCADE;
-DROP TABLE IF EXISTS tests CASCADE;
-DROP TABLE IF EXISTS tags CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
-
-
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS users
 (
     PRIMARY KEY (id),
     id       UUID         NOT NULL,
@@ -20,14 +10,14 @@ CREATE TABLE users
     role     VARCHAR(16)  NOT NULL
 );
 
-CREATE TABLE tags
+CREATE TABLE IF NOT EXISTS tags
 (
     PRIMARY KEY (id),
     id   UUID        NOT NULL,
     name VARCHAR(64) NOT NULL UNIQUE
 );
 
-CREATE TABLE tests
+CREATE TABLE IF NOT EXISTS tests
 (
     PRIMARY KEY (id),
     id          UUID        NOT NULL,
@@ -36,10 +26,11 @@ CREATE TABLE tests
     FOREIGN KEY (owner_id) REFERENCES users (id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
+    time        INT        NOT NULL,
     create_date TIMESTAMP   NOT NULL
 );
 
-CREATE TABLE questions
+CREATE TABLE IF NOT EXISTS questions
 (
     PRIMARY KEY (id),
     id      UUID         NOT NULL,
@@ -47,10 +38,11 @@ CREATE TABLE questions
     FOREIGN KEY (test_id) REFERENCES tests (id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
+    image   BYTEA       NULL,
     text    VARCHAR(256) NOT NULL UNIQUE
 );
 
-CREATE TABLE answers
+CREATE TABLE IF NOT EXISTS answers
 (
     PRIMARY KEY (id),
     id          UUID         NOT NULL,
@@ -63,7 +55,7 @@ CREATE TABLE answers
 );
 
 
-CREATE TABLE results
+CREATE TABLE IF NOT EXISTS results
 (
     PRIMARY KEY (id),
     id          UUID NOT NULL,
@@ -75,12 +67,13 @@ CREATE TABLE results
     FOREIGN KEY (owner_id) REFERENCES users (id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
+    group_code  VARCHAR NOT NULL,
     mark        INT  NOT NULL,
     create_date TIMESTAMP
 );
 
 
-CREATE TABLE test_tag
+CREATE TABLE IF NOT EXISTS test_tag
 (
     test_id UUID NOT NULL,
     tag_id  UUID NOT NULL,

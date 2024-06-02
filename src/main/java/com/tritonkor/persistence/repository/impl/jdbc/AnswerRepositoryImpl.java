@@ -36,8 +36,8 @@ public class AnswerRepositoryImpl extends GenericJdbcRepository<Answer> implemen
         if (!answer.getText().isBlank()) {
             values.put("text", answer.getText());
         }
-        if (Objects.nonNull(answer.getCorrect())) {
-            values.put("is_correct", answer.getCorrect());
+        if (Objects.nonNull(answer.getIsCorrect())) {
+            values.put("is_correct", answer.getIsCorrect());
         }
 
         return values;

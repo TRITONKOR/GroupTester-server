@@ -32,6 +32,7 @@ public class ResultRowMapper implements RowMapper<Result> {
                 .owner(userProxy)
                 .testId(testId)
                 .test(testProxy)
+                .groupCode(rs.getString("group_code"))
                 .mark(new Mark(rs.getInt("mark")))
                 .createdAt(rs.getTimestamp("create_date").toLocalDateTime())
                 .build();

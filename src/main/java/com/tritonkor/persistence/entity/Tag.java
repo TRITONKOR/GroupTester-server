@@ -7,13 +7,17 @@ import java.util.UUID;
 
 public class Tag extends Entity implements Comparable<Tag>{
 
-    private final String name;
+    private String name;
     private Tests tests;
 
     public Tag(UUID id, String name, Tests tests) {
         super(id);
         this.name = name;
         this.tests = tests;
+    }
+
+    public Tag() {
+        super(null);
     }
 
     public static TagBuilderId builder() {

@@ -32,6 +32,9 @@ public class ResultRepositoryImpl extends GenericJdbcRepository<Result> implemen
         if (Objects.nonNull(result.getTestId())) {
             values.put("test_id", result.getTestId());
         }
+        if (!result.getGroupCode().isBlank()) {
+            values.put("group_code", result.getGroupCode());
+        }
         if (Objects.nonNull(result.getOwnerId())) {
             values.put("owner_id", result.getOwnerId());
         }
@@ -50,6 +53,25 @@ public class ResultRepositoryImpl extends GenericJdbcRepository<Result> implemen
     @Override
     public List<Result> findAllByOwnerId(UUID studentId) {
         return findAllWhere(STR."owner_id = '\{studentId}'");
+    }
+
+    @Override
+    public List<Result> findAllByTeacherId(UUID teacherId) {
+        final String sql =STR.
+                """
+                        SELECT r.*
+                        FROM results r
+                        JOIN tests t ON r.test_id = t.id
+                        JOIN users u ON t.owner_id = u.id
+                        WHERE u.id = '\{teacherId}';
+                        """;
+
+        return executeSql(sql);
+    }
+
+    @Override
+    public List<Result> findAllByGroupCode(String groupCode) {
+        return findAllWhere(STR."group_code = '\{groupCode}'");
     }
 
     @Override
@@ -73,6 +95,7 @@ public class ResultRepositoryImpl extends GenericJdbcRepository<Result> implemen
         if (Objects.nonNull(resultFilterDto.reportId())) {
             filters.put("report_id", resultFilterDto.reportId());
         }
+
 
         if (Objects.nonNull(resultFilterDto.createdAtStart())
                 && Objects.nonNull(resultFilterDto.createdAtEnd())) {

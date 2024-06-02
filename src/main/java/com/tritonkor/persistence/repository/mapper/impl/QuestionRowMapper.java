@@ -27,6 +27,7 @@ public class QuestionRowMapper implements RowMapper<Question> {
         return Question.builder()
                 .id(id)
                 .text(rs.getString("text"))
+                .image(rs.getBytes("image"))
                 .answers(answers)
                 .testId(testId)
                 .test(testProxy)

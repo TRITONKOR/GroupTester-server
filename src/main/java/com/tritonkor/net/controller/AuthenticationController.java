@@ -2,6 +2,7 @@ package com.tritonkor.net.controller;
 
 import com.tritonkor.domain.service.impl.AuthenticationService;
 import com.tritonkor.net.request.AuthentiactionRequest;
+import com.tritonkor.net.request.UnauthorizeRequest;
 import com.tritonkor.net.request.RegisterRequest;
 import com.tritonkor.net.response.AuthenticationResponse;
 import com.tritonkor.net.response.UserResponse;
@@ -28,5 +29,10 @@ public class AuthenticationController {
     public ResponseEntity<UserResponse> authenticate(@Valid @RequestBody
             AuthentiactionRequest request) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
+    }
+
+    @PostMapping("/unauthorize")
+    public ResponseEntity<Boolean> leave(@Valid @RequestBody UnauthorizeRequest request) {
+        return ResponseEntity.ok(authenticationService.unauthorize(request));
     }
 }

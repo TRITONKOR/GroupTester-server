@@ -8,8 +8,8 @@ import java.util.UUID;
  */
 public class Answer extends Entity implements Comparable<Answer> {
 
-    private final UUID questionId;
-    private final QuestionProxy question;
+    private UUID questionId;
+    private QuestionProxy question;
     private String text;
     private Boolean isCorrect;
 
@@ -20,6 +20,10 @@ public class Answer extends Entity implements Comparable<Answer> {
         this.question = question;
         this.text = text;
         this.isCorrect = isCorrect;
+    }
+
+    public Answer() {
+        super(null);
     }
 
     /**
@@ -81,15 +85,25 @@ public class Answer extends Entity implements Comparable<Answer> {
     }
 
     public Question getQuestionLazy() {
-        return question.get(id);
+        return question.get(questionId);
     }
 
-    public Boolean getCorrect() {
+    public Boolean getIsCorrect() {
         return isCorrect;
     }
 
     public UUID getQuestionId() {
         return questionId;
+    }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "questionId=" + questionId +
+                ", question=" + question +
+                ", text='" + text + '\'' +
+                ", isCorrect=" + isCorrect +
+                '}';
     }
 
     @Override

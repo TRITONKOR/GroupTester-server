@@ -6,6 +6,7 @@ import com.tritonkor.domain.exception.RegisterUserException;
 import com.tritonkor.domain.exception.UserAlreadyAuthenticatedException;
 import com.tritonkor.net.request.AuthentiactionRequest;
 import com.tritonkor.net.request.RegisterRequest;
+import com.tritonkor.net.request.UnauthorizeRequest;
 import com.tritonkor.net.response.AuthenticationResponse;
 import com.tritonkor.net.response.UserResponse;
 import com.tritonkor.persistence.context.factory.PersistenceContext;
@@ -14,6 +15,8 @@ import com.tritonkor.persistence.entity.User;
 import com.tritonkor.persistence.exception.EntityUpdateException;
 import com.tritonkor.persistence.repository.contract.UserRepository;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,8 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
     private final UserContext userContext;
     private final UserRepository userRepository;
+
+    private List<User> authorizedUsers = new ArrayList<>();
 
     public AuthenticationService(PersistenceContext persistenceContext) {
         this.userContext = persistenceContext.users;
@@ -64,10 +69,25 @@ public class AuthenticationService {
     public UserResponse authenticate(@Valid AuthentiactionRequest request) {
         User foundedUser = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(AuthenticationException::new);
+        if (authorizedUsers.contains(foundedUser)) {
+            return null;
+        }
         if (!Password.check(request.getPassword(), foundedUser.getPassword()).withBcrypt()) {
             return null;
         }
 
+        authorizedUsers.add(foundedUser);
+
         return new UserResponse(foundedUser);
+    }
+
+    public Boolean unauthorize(@Valid UnauthorizeRequest request) {
+        User foundedUser = userRepository.findById(request.getUserId())
+                .orElseThrow(AuthenticationException::new);
+        if (authorizedUsers.contains(foundedUser)) {
+            authorizedUsers.remove(foundedUser);
+            return true;
+        }
+        return false;
     }
 }

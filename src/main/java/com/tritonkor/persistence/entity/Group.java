@@ -1,23 +1,30 @@
 package com.tritonkor.persistence.entity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Group extends Entity{
     private String name;
     private String code;
+    private Boolean readyToTesting;
+    private Boolean canApplyNewUsers;
     private UUID teacherId;
+    private Test test;
     private Map<User, Boolean> users;
+    private Map<User, Mark> results;
 
-    public Group(UUID id, String name, String code, UUID teacherId) {
+    public Group(UUID id, String name, String code, UUID teacherId, Test test) {
         super(id);
         this.name = name;
         this.code = code;
+        this.readyToTesting = false;
+        this.canApplyNewUsers = true;
         this.teacherId = teacherId;
+        this.test = test;
         this.users = new HashMap<>();
+        this.results = new HashMap<>();
     }
 
     public Group() {
@@ -25,7 +32,7 @@ public class Group extends Entity{
     }
 
     public static GroupBuilderId builder() {
-        return id -> name -> code -> teacherId -> () -> new Group(id, name, code, teacherId);
+        return id -> name -> code -> teacherId -> test -> () -> new Group(id, name, code, teacherId, test);
     }
 
     public interface GroupBuilderId {
@@ -41,11 +48,23 @@ public class Group extends Entity{
     }
 
     public interface GroupBuilderTeacherId {
-        GroupBuilder teacherId(UUID teacherId);
+        GroupBuilderTest teacherId(UUID teacherId);
+    }
+
+    public interface GroupBuilderTest {
+        GroupBuilder test(Test test);
     }
 
     public interface GroupBuilder {
         Group build();
+    }
+
+    public Test getTest() {
+        return test;
+    }
+
+    public void setTest(Test test) {
+        this.test = test;
     }
 
     public String getName() {
@@ -62,6 +81,22 @@ public class Group extends Entity{
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Boolean getReadyToTesting() {
+        return readyToTesting;
+    }
+
+    public void setReadyToTesting(Boolean readyToTesting) {
+        this.readyToTesting = readyToTesting;
+    }
+
+    public Boolean getCanApplyNewUsers() {
+        return canApplyNewUsers;
+    }
+
+    public void setCanApplyNewUsers(Boolean canApplyNewUsers) {
+        this.canApplyNewUsers = canApplyNewUsers;
     }
 
     public UUID getTeacherId() {
@@ -83,5 +118,13 @@ public class Group extends Entity{
         else {
             System.out.println("The user is not in the group");
         }
+    }
+
+    public Map<User, Mark> getResults() {
+        return results;
+    }
+
+    public void addResult(User user, Mark mark) {
+        results.put(user, mark);
     }
 }

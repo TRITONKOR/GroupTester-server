@@ -6,18 +6,16 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LeaveGroupRequest {
+public class ChangeUserStatusRequest {
     @NotNull
     @NotBlank
-    private String code;
+    private String groupCode;
 
     @NotNull
     private UUID userId;

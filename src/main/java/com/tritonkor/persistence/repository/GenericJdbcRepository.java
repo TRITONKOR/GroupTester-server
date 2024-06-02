@@ -523,5 +523,26 @@ public abstract class GenericJdbcRepository<T extends Entity> implements Reposit
         }
     }
 
+    /**
+     * Executes a SQL query on the database.
+     *
+     * @param sql the SQL query to execute
+     * @return a list of entities obtained as a result of the query
+     */
+    public List<T> executeSql(String sql) {
+        try (Connection connection = connectionManager.get();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            ResultSet resultSet = statement.executeQuery();
+            List<T> entities = new LinkedList<>();
+            while (resultSet.next()) {
+                entities.add(rowMapper.mapRow(resultSet));
+            }
+            return entities;
+        } catch (SQLException e) {
+            throw new RuntimeException("Помилка при виконанні SQL-запиту: " + e.getMessage());
+        }
+    }
+
     protected abstract Map<String, Object> tableValues(T entity);
 }

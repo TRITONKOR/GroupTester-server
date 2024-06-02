@@ -29,14 +29,12 @@ public class TestService {
 
     private final TestContext testContext;
     private final TestRepository testRepository;
-    private final AuthorizeService authorizeService;
     private final Validator validator;
 
-    public TestService(PersistenceContext persistenceContext, AuthorizeService authorizeService,
+    public TestService(PersistenceContext persistenceContext,
             Validator validator) {
         this.testContext = persistenceContext.tests;
         this.testRepository = persistenceContext.tests.repository;
-        this.authorizeService = authorizeService;
         this.validator = validator;
     }
 
@@ -165,6 +163,7 @@ public class TestService {
                 .title(testStoreDto.title())
                 .ownerId(testStoreDto.ownerId())
                 .owner(null)
+                .time(testStoreDto.time())
                 .questions(null)
                 .tags(null)
                 .createdAt(null)
@@ -194,8 +193,9 @@ public class TestService {
         Test test = Test.builder()
                 .id(testUpdateDto.id())
                 .title(testUpdateDto.title())
-                .ownerId(testUpdateDto.ownerId())
+                .ownerId(oldTest.getOwnerId())
                 .owner(null)
+                .time(testUpdateDto.time())
                 .questions(null)
                 .tags(null)
                 .createdAt(null)
@@ -209,10 +209,15 @@ public class TestService {
 
     public boolean delete(UUID id, UUID userId) {
         Test test = findById(id);
-        if (!authorizeService.canDelete(test, userId)) {
+        if (test.getOwnerId() != userId) {
             throw AccessDeniedException.notAuthorUser("видаляти тести");
         }
 
         return testContext.repository.delete(test.getId());
+    }
+
+    public boolean attachTag(UUID testId, UUID tagId) {
+        testRepository.attach(testId, tagId);
+        return true;
     }
 }

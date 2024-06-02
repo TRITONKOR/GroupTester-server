@@ -36,6 +36,9 @@ public class QuestionRepositoryImpl extends GenericJdbcRepository<Question> impl
         if (!question.getText().isBlank()) {
             values.put("text", question.getText());
         }
+        if (Objects.nonNull(question.getImage())) {
+            values.put("image", question.getImage());
+        }
 
         return values;
     }
@@ -66,6 +69,7 @@ public class QuestionRepositoryImpl extends GenericJdbcRepository<Question> impl
         if (Objects.nonNull(questionFilterDto.testId())) {
             filters.put("test_id", questionFilterDto.testId());
         }
+
 
         return findAll(offset, limit, sortColumn, ascending, filters);
     }
