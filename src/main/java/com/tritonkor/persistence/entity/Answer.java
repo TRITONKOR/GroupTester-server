@@ -5,6 +5,9 @@ import java.util.UUID;
 
 /**
  * The {@code Answer} class represents an answer entity with its associated properties.
+ * This class contains information about the answer text, its relation to a question,
+ * and whether it is correct.
+ * It implements the {@link Comparable} interface to allow comparison based on the text content.
  */
 public class Answer extends Entity implements Comparable<Answer> {
 
@@ -13,6 +16,15 @@ public class Answer extends Entity implements Comparable<Answer> {
     private String text;
     private Boolean isCorrect;
 
+    /**
+     * Constructs an {@code Answer} instance with the specified details.
+     *
+     * @param id The unique identifier for this answer.
+     * @param questionId The unique identifier of the associated question.
+     * @param question A proxy for lazy-loading the associated question.
+     * @param text The text content of the answer.
+     * @param isCorrect Indicates whether this answer is correct.
+     */
     public Answer(UUID id, UUID questionId, QuestionProxy question, String text,
             Boolean isCorrect) {
         super(id);
@@ -22,6 +34,9 @@ public class Answer extends Entity implements Comparable<Answer> {
         this.isCorrect = isCorrect;
     }
 
+    /**
+     * Default constructor for {@code Answer} which initializes the ID to {@code null}.
+     */
     public Answer() {
         super(null);
     }
@@ -84,14 +99,29 @@ public class Answer extends Entity implements Comparable<Answer> {
         return text;
     }
 
+    /**
+     * Lazily loads and gets the associated {@code Question}.
+     *
+     * @return The associated {@code Question} object.
+     */
     public Question getQuestionLazy() {
         return question.get(questionId);
     }
 
+    /**
+     * Checks if the answer is correct.
+     *
+     * @return {@code true} if the answer is correct, otherwise {@code false}.
+     */
     public Boolean getIsCorrect() {
         return isCorrect;
     }
 
+    /**
+     * Gets the unique identifier of the associated question.
+     *
+     * @return The unique identifier of the question.
+     */
     public UUID getQuestionId() {
         return questionId;
     }

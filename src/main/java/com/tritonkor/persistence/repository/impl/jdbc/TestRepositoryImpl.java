@@ -70,16 +70,6 @@ public class TestRepositoryImpl extends GenericJdbcRepository<Test> implements T
         return values;
     }
 
-    /**
-     * Finds a Test entity by its title.
-     *
-     * @param title the title of the Test
-     * @return an Optional containing the Test if found, otherwise empty
-     */
-    @Override
-    public Optional<Test> findByTitle(String title) {
-        return findBy("title", title);
-    }
 
     /**
      * Finds all Tags associated with a given Test ID.

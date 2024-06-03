@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Length;
 
 public record AnswerStoreDto(
         @NotBlank(message = "Текст відповіді не може бути порожнім")
-        @Length(min = 6, max = 32, message = "Текст відповіді має містити від 6 до 32 символів")
+        @Length(min = 6, max = 256, message = "Текст відповіді має містити від 6 до 256 символів")
         String text,
 
         @NotNull(message = "Задайте питання, до якого належить відповідь")

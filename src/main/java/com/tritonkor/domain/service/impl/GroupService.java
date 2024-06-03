@@ -9,7 +9,6 @@ import com.tritonkor.net.request.group.ChangeUserStatusRequest;
 import com.tritonkor.net.request.group.RunTestRequest;
 import com.tritonkor.net.response.GroupResponse;
 import com.tritonkor.persistence.entity.Group;
-import com.tritonkor.persistence.entity.Result;
 import com.tritonkor.persistence.entity.Test;
 import com.tritonkor.persistence.entity.User;
 import com.tritonkor.persistence.exception.EntityNotFoundException;
@@ -21,6 +20,9 @@ import java.util.Objects;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class for managing groups.
+ */
 @Service
 public class GroupService {
 
@@ -34,21 +36,48 @@ public class GroupService {
         this.testService = testService;
     }
 
+    /**
+     * Finds a group by its ID.
+     *
+     * @param id The ID of the group.
+     * @return The group found.
+     * @throws EntityNotFoundException if the group with the given ID is not found.
+     */
     public Group findById(UUID id) {
         return groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Групу з таким айді не знайдено"));
     }
 
+    /**
+     * Finds a group by its name.
+     *
+     * @param name The name of the group.
+     * @return The group found.
+     * @throws EntityNotFoundException if the group with the given name is not found.
+     */
     public Group findByName(String name) {
         return groupRepository.findByName(name).orElseThrow(() -> new EntityNotFoundException("Групу з такою назвою не знайдено"));
     }
 
+    /**
+     * Finds a group by its code.
+     *
+     * @param code The code of the group.
+     * @return The group found.
+     * @throws EntityNotFoundException if the group with the given code is not found.
+     */
     public Group findByCode(String code) {
         return groupRepository.findByCode(code).orElseThrow(() -> new EntityNotFoundException("Групу з таким кодом не знайдено"));
     }
 
+    /**
+     * Creates a new group.
+     *
+     * @param request The request containing group information.
+     * @return The response containing the created group.
+     */
     public GroupResponse createGroup(@Valid CreateGroupRequest request) {
         if (groupRepository.existsByNameOrCode(request.getName(), request.getCode())) {
-            throw new RuntimeException("Group with the same name or code already exists");
+            return null;
         }
 
         Group group = Group.builder()
@@ -64,6 +93,12 @@ public class GroupService {
         return new GroupResponse(group);
     }
 
+    /**
+     * Deletes a group.
+     *
+     * @param request The request containing group ID and user ID.
+     * @return true if the group is successfully deleted, false otherwise.
+     */
     public boolean deleteGroup(@Valid DeleteGroupRequest request) {
         Group group = groupRepository.findById(request.getGroupId()).orElseThrow(() -> new EntityNotFoundException("Групу з таким айді не знайдено"));
         if (Objects.nonNull(group) && group.getTeacherId().equals(request.getUserId())) {
@@ -72,6 +107,12 @@ public class GroupService {
         return true;
     }
 
+    /**
+     * Adds a user to a group.
+     *
+     * @param request The request containing group code and user ID.
+     * @return The response containing the updated group.
+     */
     public GroupResponse addUserToGroup(@Valid JoinGroupRequest request) {
         Group group = groupRepository.findByCode(request.getCode()).orElseThrow(() -> new EntityNotFoundException("Групу з таким кодом не знайдено"));
         User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача"));
@@ -84,6 +125,12 @@ public class GroupService {
         return null;
     }
 
+    /**
+     * Removes a user from a group.
+     *
+     * @param request The request containing group code and user ID.
+     * @return true if the user is successfully removed from the group, false otherwise.
+     */
     public boolean removeUserFromGroup(@Valid LeaveGroupRequest request) {
         Group group = groupRepository.findByCode(request.getCode()).orElseThrow(() -> new EntityNotFoundException("Групу з таким кодом не знайдено"));
         User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача"));
@@ -104,12 +151,13 @@ public class GroupService {
     }
 
     public GroupResponse getGroupStatus(@Valid UUID id) {
-        Group group = groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Групу з таким айді не знайдено"));
-        if (Objects.nonNull(group)) {
-            GroupResponse response = new GroupResponse(group);
-            return response;
+        try {
+            Group group = groupRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Групу з таким айді не знайдено"));
+
+            return new GroupResponse(group);
+        } catch (EntityNotFoundException e) {
+            return null;
         }
-        return null;
     }
 
     public boolean changeUserStatus(@Valid ChangeUserStatusRequest request) {
@@ -124,6 +172,13 @@ public class GroupService {
         return false;
     }
 
+    /**
+     * Runs a test for a group.
+     *
+     * @param request The request containing group and user IDs.
+     * @return true if the test is successfully run for the group, false otherwise.
+     * @throws EntityNotFoundException if the group with the given ID is not found.
+     */
     public boolean runTestForGroup(@Valid RunTestRequest request) {
         Group group = groupRepository.findById(request.getGroupId()).orElseThrow(() -> new EntityNotFoundException("Групу з таким кодом не знайдено"));
         User user = userRepository.findById(request.getUserID()).orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача"));

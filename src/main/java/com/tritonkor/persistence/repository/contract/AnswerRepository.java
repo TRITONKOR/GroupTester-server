@@ -12,8 +12,6 @@ public interface AnswerRepository extends Repository<Answer> {
 
     List<Answer> findAllByQuestionId(UUID questionId);
 
-    Optional<Answer> findByText(String text);
-
     List<Answer> findAll(int offset, int limit, String sortColumn, boolean ascending,
             AnswerFilterDto answerFilterDto);
 }

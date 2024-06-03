@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Length;
 public record QuestionUpdateDto(
         @NotNull(message = "Відсутній іденитфікатор питання")
         UUID id,
-        @Length(min = 10, max = 64, message = "Текст питання повинний відповідати діапазону символів від 10 до 64")
+        @Length(min = 10, max = 256, message = "Текст питання повинний відповідати діапазону символів від 10 до 256")
         String text,
 
         byte[] image,

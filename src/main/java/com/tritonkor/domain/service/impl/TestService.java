@@ -51,18 +51,6 @@ public class TestService {
     }
 
     /**
-     * Finds a test by its title.
-     *
-     * @param title the title of the test
-     * @return the test found
-     * @throws EntityNotFoundException if the test with the specified title is not found
-     */
-    public Test findByTitle(String title) {
-        return testContext.repository.findByTitle(title)
-                .orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти тест"));
-    }
-
-    /**
      * Retrieves all tests.
      *
      * @return a set of all tests

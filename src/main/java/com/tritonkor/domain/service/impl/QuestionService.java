@@ -33,11 +33,6 @@ public class QuestionService {
                 .orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти питання"));
     }
 
-    public Question findByText(String text) {
-        return questionContext.repository.findByText(text)
-                .orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти питання"));
-    }
-
     public List<Question> findAll() {
         return questionRepository.findAll();
     }

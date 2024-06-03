@@ -49,11 +49,6 @@ public class QuestionRepositoryImpl extends GenericJdbcRepository<Question> impl
     }
 
     @Override
-    public Optional<Question> findByText(String text) {
-        return findBy("text", text);
-    }
-
-    @Override
     public List<Question> findAll(
             int offset,
             int limit,

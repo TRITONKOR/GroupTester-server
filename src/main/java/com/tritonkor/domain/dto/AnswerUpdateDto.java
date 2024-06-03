@@ -8,7 +8,7 @@ public record AnswerUpdateDto(
         @NotNull(message = "Відсутній іденитфікатор відповіді")
         UUID id,
 
-        @Length(min = 6, max = 32, message = "Текст відповіді має містити від 6 до 32 символів")
+        @Length(min = 6, max = 256, message = "Текст відповіді має містити від 6 до 256 символів")
         String text,
 
         UUID questionId,

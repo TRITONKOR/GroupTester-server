@@ -11,6 +11,8 @@ import java.util.UUID;
 /**
  * The {@code Test} class represents a test in the system.
  * It extends the {@code Entity} class and implements {@code Comparable<Test>}.
+ * This class contains the test title, associated tags, owner information,
+ * test duration, questions, and the creation timestamp.
  */
 public class Test extends Entity implements Comparable<Test> {
 
@@ -29,6 +31,7 @@ public class Test extends Entity implements Comparable<Test> {
      * @param title the title of the test
      * @param ownerId the unique identifier of the owner
      * @param owner the proxy for the owner
+     * @param time the duration of the test in minutes
      * @param questions the questions associated with the test
      * @param tags the tags associated with the test
      * @param createdAt the timestamp when the test was created

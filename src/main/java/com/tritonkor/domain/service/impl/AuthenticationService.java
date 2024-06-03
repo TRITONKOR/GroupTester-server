@@ -35,9 +35,14 @@ public class AuthenticationService {
         this.userRepository = userContext.repository;
     }
 
+    /**
+     * Registers a new user.
+     *
+     * @param request The request containing user registration information.
+     * @return An authentication response indicating whether the registration was successful.
+     * @throws RegisterUserException if an error occurs during user registration.
+     */
     public AuthenticationResponse register(@Valid RegisterRequest request) {
-
-
         User user = User.builder()
                 .id(null)
                 .username(request.getUsername())
@@ -66,21 +71,38 @@ public class AuthenticationService {
                 .build();
     }
 
+    /**
+     * Authenticates a user.
+     *
+     * @param request The request containing user authentication information.
+     * @return The user response if authentication is successful, otherwise null.
+     */
     public UserResponse authenticate(@Valid AuthentiactionRequest request) {
-        User foundedUser = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(AuthenticationException::new);
-        if (authorizedUsers.contains(foundedUser)) {
+        try {
+            User foundedUser = userRepository.findByUsername(request.getUsername())
+                    .orElseThrow(AuthenticationException::new);
+
+            if (authorizedUsers.contains(foundedUser)) {
+                return null;
+            }
+            if (!Password.check(request.getPassword(), foundedUser.getPassword()).withBcrypt()) {
+                return null;
+            }
+
+            authorizedUsers.add(foundedUser);
+
+            return new UserResponse(foundedUser);
+        } catch (AuthenticationException e) {
             return null;
         }
-        if (!Password.check(request.getPassword(), foundedUser.getPassword()).withBcrypt()) {
-            return null;
-        }
-
-        authorizedUsers.add(foundedUser);
-
-        return new UserResponse(foundedUser);
     }
 
+    /**
+     * Unauthorizes a user.
+     *
+     * @param request The request containing user unauthorization information.
+     * @return True if the unauthorization was successful, otherwise false.
+     */
     public Boolean unauthorize(@Valid UnauthorizeRequest request) {
         User foundedUser = userRepository.findById(request.getUserId())
                 .orElseThrow(AuthenticationException::new);

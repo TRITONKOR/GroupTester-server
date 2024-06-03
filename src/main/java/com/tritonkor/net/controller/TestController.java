@@ -12,7 +12,6 @@ import com.tritonkor.net.request.question.DeleteQuestionRequest;
 import com.tritonkor.net.request.question.SaveQuestionRequest;
 import com.tritonkor.net.request.test.CreateTestRequest;
 import com.tritonkor.net.request.test.DeleteTestRequest;
-import com.tritonkor.net.response.AnswerResponse;
 import com.tritonkor.net.response.TestResponse;
 import com.tritonkor.persistence.entity.Answer;
 import com.tritonkor.persistence.entity.Question;
@@ -32,6 +31,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller class for managing test-related endpoints.
+ */
 @RestController
 @RequestMapping("/api/test")
 @RequiredArgsConstructor
@@ -41,6 +43,10 @@ public class TestController {
     private final QuestionService questionService;
     private final AnswerService answerService;
 
+    /**
+     * Retrieves all tests.
+     * @return ResponseEntity with a list of TestResponse objects
+     */
     @GetMapping("/all")
     public ResponseEntity<List<TestResponse>> getAll() {
         List<TestResponse> testResponses = testService.findAll();
@@ -51,6 +57,11 @@ public class TestController {
         return ResponseEntity.ok(testResponses);
     }
 
+    /**
+     * Retrieves a test by its ID.
+     * @param id The ID of the test
+     * @return ResponseEntity with the TestResponse object
+     */
     @GetMapping("/get-by-id")
     public ResponseEntity<TestResponse> getTest(@RequestParam("id") String id) {
         Test test = testService.findById(UUID.fromString(id));
@@ -58,6 +69,11 @@ public class TestController {
         return ResponseEntity.ok(new TestResponse(test));
     }
 
+    /**
+     * Retrieves tests associated with a specific user.
+     * @param userId The ID of the user
+     * @return ResponseEntity with a list of TestResponse objects
+     */
     @GetMapping("/user-tests")
     public ResponseEntity<List<TestResponse>> getTestByUser(@RequestParam("userId") String userId) {
         List<Test> tests = testService.findAllByUserId(UUID.fromString(userId));
@@ -74,6 +90,11 @@ public class TestController {
         return ResponseEntity.ok(testResponses);
     }
 
+    /**
+     * Saves or updates a question associated with a test.
+     * @param request The SaveQuestionRequest object containing question details
+     * @return ResponseEntity with the updated TestResponse object
+     */
     @PostMapping("/question/save")
     public ResponseEntity<TestResponse> updateQuestion(
             @Valid @RequestBody SaveQuestionRequest request) {
@@ -118,6 +139,11 @@ public class TestController {
         }
     }
 
+    /**
+     * Deletes a question associated with a test.
+     * @param request The DeleteQuestionRequest object containing question ID and user ID
+     * @return ResponseEntity with a boolean indicating the success of the operation
+     */
     @PostMapping("/question/delete")
     public ResponseEntity<Boolean> deleteQuestion(@Valid @RequestBody DeleteQuestionRequest request) {
 
@@ -126,6 +152,11 @@ public class TestController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * Creates a new test.
+     * @param request The CreateTestRequest object containing test details
+     * @return ResponseEntity with a boolean indicating the success of the operation
+     */
     @PostMapping("/create")
     public ResponseEntity<Boolean> createTest(@Valid @RequestBody CreateTestRequest request) {
         TestStoreDto testStoreDto = new TestStoreDto(request.getTestTitle(), request.getUserId(),
@@ -144,6 +175,11 @@ public class TestController {
         return ResponseEntity.ok(false);
     }
 
+    /**
+     * Deletes a test.
+     * @param request The DeleteTestRequest object containing test ID and user ID
+     * @return ResponseEntity with a boolean indicating the success of the operation
+     */
     @PostMapping("/delete")
     public ResponseEntity<Boolean> deleteTest(@Valid @RequestBody DeleteTestRequest request) {
 

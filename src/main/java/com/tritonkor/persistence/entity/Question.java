@@ -9,6 +9,8 @@ import lombok.Getter;
 
 /**
  * The {@code Question} class represents a question with its associated properties.
+ * This class contains the question text, optional image, and the associated answers.
+ * It also maintains references to the related test through a proxy.
  */
 @Getter
 public class Question extends Entity implements Comparable<Question>{
@@ -19,6 +21,16 @@ public class Question extends Entity implements Comparable<Question>{
     private final UUID testId;
     private final TestProxy test;
 
+    /**
+     * Constructs a {@code Question} instance with the specified details.
+     *
+     * @param id The unique identifier for this question.
+     * @param text The text content of the question.
+     * @param image The image associated with the question, if any.
+     * @param answers The answers associated with the question.
+     * @param testId The unique identifier of the associated test.
+     * @param test A proxy for lazy-loading the associated test.
+     */
     public Question(UUID id, String text, byte[] image, Answers answers, UUID testId, TestProxy test) {
         super(id);
         this.text = text;

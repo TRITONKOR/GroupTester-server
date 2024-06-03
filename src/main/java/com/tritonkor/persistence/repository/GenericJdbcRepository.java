@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -303,7 +304,7 @@ public abstract class GenericJdbcRepository<T extends Entity> implements Reposit
                         """;
 
         if (attributes.stream().anyMatch(a -> a.equals("create_date"))) {
-            values.put("create_date", LocalDateTime.now()); // create_date
+            values.put("create_date", LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
         }
 
         int idIndex = 0;
@@ -383,7 +384,7 @@ public abstract class GenericJdbcRepository<T extends Entity> implements Reposit
 
         if (attributes.stream().anyMatch(a -> a.equals("create_date"))) {
             listOfValues.forEach(values -> {
-                values.put("create_date", LocalDateTime.now()); // create_dat
+                values.put("create_date", LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
             });
         }
 

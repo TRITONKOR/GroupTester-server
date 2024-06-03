@@ -6,7 +6,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * The {@code Result} class represents a result of a test for a specific user.
+ * The {@code Result} class represents the result of a test for a specific user.
+ * This class contains information about the user who took the test, the test itself,
+ * the group code, the mark received, and the timestamp when the result was created.
  */
 public class Result extends Entity implements Comparable<Result> {
     private final UUID ownerId;
@@ -17,6 +19,18 @@ public class Result extends Entity implements Comparable<Result> {
     private final Mark mark;
     private final LocalDateTime createdAt;
 
+    /**
+     * Constructs a {@code Result} instance with the specified details.
+     *
+     * @param id The unique identifier for this result.
+     * @param ownerId The unique identifier of the user who owns this result.
+     * @param owner A proxy for lazy-loading the user who owns this result.
+     * @param testId The unique identifier of the associated test.
+     * @param test A proxy for lazy-loading the associated test.
+     * @param groupCode The code of the group associated with this result.
+     * @param mark The mark received for the test.
+     * @param createdAt The timestamp when the result was created.
+     */
     public Result(UUID id, UUID ownerId, UserProxy owner, UUID testId, TestProxy test, String groupCode,
              Mark mark, LocalDateTime createdAt) {
         super(id);

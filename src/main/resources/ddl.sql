@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS questions
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     image   BYTEA       NULL,
-    text    VARCHAR(256) NOT NULL UNIQUE
+    text    VARCHAR(256) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS answers
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS answers
     FOREIGN KEY (question_id) REFERENCES questions (id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    text        VARCHAR(256) NOT NULL UNIQUE,
+    text        VARCHAR(256) NOT NULL,
     is_correct  BOOLEAN      NOT NULL
 );
 

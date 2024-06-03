@@ -21,6 +21,9 @@ import java.util.Objects;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
+/**
+ * This class provides services for managing users within the application.
+ */
 @Service
 public class UserService {
 
@@ -30,6 +33,14 @@ public class UserService {
     private final Validator validator;
     private Path defaultAvatar;
 
+    /**
+     * Constructs a UserService with the specified dependencies.
+     *
+     * @param persistenceContext The persistence context providing access to user data.
+     * @param fileService        The service for handling file operations.
+     * @param validator          The validator for validating user data.
+     * @throws IOException if an I/O error occurs while setting up the default avatar path.
+     */
     public UserService(PersistenceContext persistenceContext,
             FileService fileService, Validator validator) throws IOException {
         this.userContext = persistenceContext.users;
@@ -40,16 +51,37 @@ public class UserService {
         defaultAvatar = fileService.getPathFromResource("default-avatar.png");
     }
 
+    /**
+     * Retrieves a user by their ID.
+     *
+     * @param id The ID of the user to retrieve.
+     * @return The user entity.
+     * @throws EntityNotFoundException if no user is found with the specified ID.
+     */
     public User findById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача"));
     }
 
+    /**
+     * Retrieves a user by their username.
+     *
+     * @param username The username of the user to retrieve.
+     * @return The user entity.
+     * @throws EntityNotFoundException if no user is found with the specified username.
+     */
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача"));
     }
 
+    /**
+     * Retrieves a user by their email.
+     *
+     * @param email The email of the user to retrieve.
+     * @return The user entity.
+     * @throws EntityNotFoundException if no user is found with the specified email.
+     */
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Не вдалось знайти користувача"));

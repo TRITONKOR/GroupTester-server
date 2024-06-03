@@ -11,12 +11,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The {@code TagController} class handles tag-related HTTP requests.
+ */
 @RestController
 @RequestMapping("/api/tag")
 @RequiredArgsConstructor
 public class TagController {
     private final TagService tagService;
 
+    /**
+     * Retrieves all tags.
+     *
+     * @return a response entity containing a list of tag responses
+     */
     @GetMapping("/all")
     public ResponseEntity<List<TagResponse>> getAllTags() {
         List<Tag> tags = tagService.findAll();

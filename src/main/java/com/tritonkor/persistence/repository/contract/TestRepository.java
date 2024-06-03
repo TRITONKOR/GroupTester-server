@@ -11,8 +11,6 @@ import java.util.UUID;
 
 public interface TestRepository extends Repository<Test>, ManyToMany {
 
-    Optional<Test> findByTitle(String title);
-
     List<Tag> findAllTags(UUID testId);
     List<Test> findAllByUserId(UUID userId);
 
